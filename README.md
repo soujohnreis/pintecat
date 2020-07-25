@@ -17,4 +17,10 @@ $ pod install
 - 'SkeletonView'
 - 'Cuckoo'
 
+
+
+<img src="https://github.com/johnreis/pintecat/blob/master/presentation.jpg">
+
+Just enjoy its fluffiness :).
+
 Made with love by [John R.](https://www.linkedin.com/in/johnlenonreis/) &#9829;
