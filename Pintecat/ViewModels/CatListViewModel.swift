@@ -50,6 +50,10 @@ class CatListViewModel {
         return self.cats.value[indexPath.row]
     }
     
+    func shouldReloadCell(at indexPath: IndexPath) -> Bool {
+        return self.cat(from: indexPath) != nil
+    }
+    
     func catCount() -> Int {
         return self.cats.value.count
     }

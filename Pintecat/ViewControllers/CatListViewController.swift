@@ -89,7 +89,7 @@ extension CatListViewController: UICollectionViewDataSource {
         if picture == nil {
             DispatchQueue.main.async {
                 self.viewModel.fetchPicture(to: indexPath) {
-                    if self.catCollectionView.cellForItem(at: indexPath) != nil {
+                    if self.viewModel.shouldReloadCell(at: indexPath) {
                         self.catCollectionView.reloadItems(at: [indexPath])
                     }
                 }

@@ -269,4 +269,21 @@ class CatListViewModelTest: XCTestCase {
         // then
         verify(self.networkService, times(1)).fetchCats(page: any(), completion: any())
     }
+    
+    func testShouldReloadCellAtIndexPath() {
+        // given
+        let viewModel = CatListViewModel()
+        viewModel.cats.accept([
+            Cat(id: "12345", title: "Cat title", link: "link"),
+            Cat(id: "12345", title: "Cat title", link: "link")
+        ])
+        
+        // when
+        let expectToReload = viewModel.shouldReloadCell(at: IndexPath(row: 0, section: 0))
+        let expectToNotReload = viewModel.shouldReloadCell(at: IndexPath(row: 2, section: 0))
+        
+        // then
+        XCTAssertTrue(expectToReload)
+        XCTAssertFalse(expectToNotReload)
+    }
 }

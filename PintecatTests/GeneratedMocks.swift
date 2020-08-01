@@ -1,4 +1,4 @@
-// MARK: - Mocks generated from file: Pintecat/Services/CatService.swift at 2020-07-25 16:32:53 +0000
+// MARK: - Mocks generated from file: Pintecat/Services/CatService.swift at 2020-08-01 22:40:40 +0000
 
 //
 //  CatService.swift
@@ -315,7 +315,7 @@ import Foundation
 }
 
 
-// MARK: - Mocks generated from file: Pintecat/Services/ImageService.swift at 2020-07-25 16:32:53 +0000
+// MARK: - Mocks generated from file: Pintecat/Services/ImageService.swift at 2020-08-01 22:40:40 +0000
 
 //
 //  ImageService.swift
@@ -513,7 +513,7 @@ import AlamofireImage
 }
 
 
-// MARK: - Mocks generated from file: Pintecat/Services/NetworkAuthService.swift at 2020-07-25 16:32:53 +0000
+// MARK: - Mocks generated from file: Pintecat/Services/NetworkAuthService.swift at 2020-08-01 22:40:40 +0000
 
 //
 //  NetworkAuthService.swift
@@ -711,7 +711,7 @@ import Foundation
 }
 
 
-// MARK: - Mocks generated from file: Pintecat/Services/NetworkService.swift at 2020-07-25 16:32:53 +0000
+// MARK: - Mocks generated from file: Pintecat/Services/NetworkService.swift at 2020-08-01 22:40:40 +0000
 
 //
 //  NetworkService.swift
