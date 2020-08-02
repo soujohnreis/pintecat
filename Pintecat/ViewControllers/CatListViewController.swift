@@ -110,6 +110,8 @@ extension CatListViewController: UICollectionViewDataSource {
         self.viewModel.fetchMoreCatsIfNeeded(at: indexPath)
     }
     
+    
+    // Cause layout warnings: https://developer.apple.com/forums/thread/651992
     func collectionView(_ collectionView: UICollectionView, contextMenuConfigurationForItemAt indexPath: IndexPath, point: CGPoint) -> UIContextMenuConfiguration? {
         
         guard let cat = self.viewModel.cat(at: indexPath) else { return nil}
@@ -119,10 +121,12 @@ extension CatListViewController: UICollectionViewDataSource {
             return CatPreviewViewController(picture: picture)
         }, actionProvider: { _ in
             return UIMenu(title: cat.title, image: nil, identifier: nil, options: [], children: [
-                
-                UIAction(title: "Share", image: UIImage(systemName: "square.and.arrow.up"), identifier: nil, discoverabilityTitle: nil, attributes: [], state: .mixed, handler: { _ in
+                UIAction(title: "Like", image: UIImage(systemName: "heart.fill")) {_ in
+                    print("like action")
+                },
+                UIAction(title: "Share", image: UIImage(systemName: "square.and.arrow.up")) {_ in
                     print("share action")
-                })
+                }
             ])
         })
         
