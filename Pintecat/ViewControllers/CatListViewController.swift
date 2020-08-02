@@ -12,6 +12,11 @@ import Alamofire
 
 class CatListViewController: UIViewController {
 
+    // MARK: Enums
+    enum ContextIdentifier: String {
+        case catContext = "catContext"
+    }
+    
     // MARK: Properties
     private var bag = DisposeBag()
     private var activityIndicator = UIActivityIndicatorView(style: .large)
@@ -84,7 +89,7 @@ extension CatListViewController: UICollectionViewDataSource {
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "CatCollectionViewCell", for: indexPath) as! CatCollectionViewCell
-        let picture = self.viewModel.picture(to: indexPath)
+        let picture = self.viewModel.picture(at: indexPath)
         
         if picture == nil {
             DispatchQueue.main.async {
@@ -103,6 +108,41 @@ extension CatListViewController: UICollectionViewDataSource {
     
     func collectionView(_ collectionView: UICollectionView, willDisplay cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
         self.viewModel.fetchMoreCatsIfNeeded(at: indexPath)
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, contextMenuConfigurationForItemAt indexPath: IndexPath, point: CGPoint) -> UIContextMenuConfiguration? {
+        
+        guard let cat = self.viewModel.cat(at: indexPath) else { return nil}
+        guard let picture = self.viewModel.picture(at: indexPath) else { return nil }
+        
+        let menu = UIContextMenuConfiguration(identifier: cat.menuID, previewProvider: {
+            return CatPreviewViewController(picture: picture)
+        }, actionProvider: { _ in
+            return UIMenu(title: cat.title, image: nil, identifier: nil, options: [], children: [
+                
+                UIAction(title: "Share", image: UIImage(systemName: "square.and.arrow.up"), identifier: nil, discoverabilityTitle: nil, attributes: [], state: .mixed, handler: { _ in
+                    print("share action")
+                })
+            ])
+        })
+        
+        return menu
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, previewForHighlightingContextMenuWithConfiguration configuration: UIContextMenuConfiguration) -> UITargetedPreview? {
+        return nil
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, previewForDismissingContextMenuWithConfiguration configuration: UIContextMenuConfiguration) -> UITargetedPreview? {
+        return nil
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, willPerformPreviewActionForMenuWith configuration: UIContextMenuConfiguration, animator: UIContextMenuInteractionCommitAnimating) {
+//        guard let detailViewController = self.viewModel.detailViewController(by: configuration) else { return }
+//
+//        animator.addCompletion { [weak self]
+//            self?.navigationController?.pushViewController(detailViewController, animated: true)
+//        }
     }
 }
 

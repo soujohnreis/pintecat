@@ -43,15 +43,35 @@ class CatListViewModel {
         self.imageService = imageService
     }
     
-    private func cat(from indexPath: IndexPath) -> Cat? {
+    func cat(at indexPath: IndexPath) -> Cat? {
         if !self.cats.value.indices.contains(indexPath.row) {
             return nil
         }
         return self.cats.value[indexPath.row]
     }
     
+    func cat(by menuConfiguration: UIContextMenuConfiguration) -> Cat? {
+        return self.cats.value.item(for: menuConfiguration)
+    }
+    
+    func picture(at indexPath: IndexPath) -> UIImage? {
+        if let cat = self.cat(at: indexPath) {
+            return self.pictures[cat.id]
+        }
+        
+        return nil
+    }
+    
+    func picture(by menuConfiguration: UIContextMenuConfiguration) -> UIImage? {
+        if let cat = self.cat(by: menuConfiguration) {
+            return self.pictures[cat.id]
+        }
+        
+        return nil
+    }
+    
     func shouldReloadCell(at indexPath: IndexPath) -> Bool {
-        return self.cat(from: indexPath) != nil
+        return self.cat(at: indexPath) != nil
     }
     
     func catCount() -> Int {
@@ -59,7 +79,7 @@ class CatListViewModel {
     }
 
     func sizeForItemAt(_ indexPath: IndexPath, maxWidth: CGFloat) -> CGSize {
-        let cat = self.cat(from: indexPath)
+        let cat = self.cat(at: indexPath)
         if indexPath.row % 13 == 0 {
             
             if let coverWidth = cat?.coverWidth, let coverHeight = cat?.coverHeight {
@@ -74,16 +94,8 @@ class CatListViewModel {
         return CGSize(width: size, height: size)
     }
     
-    func picture(to indexPath: IndexPath) -> UIImage? {
-        if let cat = self.cat(from: indexPath) {
-            return self.pictures[cat.id]
-        }
-        
-        return nil
-    }
-    
     func fetchPicture(to indexPath: IndexPath, completion: @escaping () -> Void) {
-        guard let cat = self.cat(from: indexPath) else { return }
+        guard let cat = self.cat(at: indexPath) else { return }
         
         if !self.downloadedPictures.keys.contains(cat.id) {
             self.imageService.downloadImage(from: cat.directLink()) { [weak self] response in
@@ -129,5 +141,23 @@ class CatListViewModel {
         self.cats.accept([])
         self.nextPage = 0
         self.fetchCats(isRefreshing: true)
+    }
+    
+    func detailViewController(at indexPath: IndexPath) -> CatDetailViewController? {
+        guard let cat = self.cat(at: indexPath) else { return nil}
+        guard let picture = self.picture(at: indexPath) else { return nil }
+        let viewModel = CatDetailViewModel(cat: cat, picture: picture)
+        let viewController = CatDetailViewController()
+        viewController.viewModel = viewModel
+        return viewController
+    }
+    
+    func detailViewController(by menuConfiguration: UIContextMenuConfiguration) -> CatDetailViewController? {
+        guard let cat = self.cat(by: menuConfiguration) else { return nil}
+        guard let picture = self.picture(by: menuConfiguration) else { return nil }
+        let viewModel = CatDetailViewModel(cat: cat, picture: picture)
+        let viewController = CatDetailViewController()
+        viewController.viewModel = viewModel
+        return viewController
     }
 }

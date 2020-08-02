@@ -113,7 +113,7 @@ class CatListViewModelTest: XCTestCase {
         let viewModel = CatListViewModel()
         
         // when
-        let picture = viewModel.picture(to: IndexPath(row: 0, section: 0))
+        let picture = viewModel.picture(at: IndexPath(row: 0, section: 0))
         
         // then
         XCTAssertNil(picture)
@@ -149,7 +149,35 @@ class CatListViewModelTest: XCTestCase {
             expectation.fulfill()
         }
         wait(for: [expectation], timeout: 1)
-        let picture = viewModel.picture(to: IndexPath(row: 0, section: 0))
+        let picture = viewModel.picture(at: IndexPath(row: 0, section: 0))
+        
+        // then
+        XCTAssertNotNil(picture)
+        XCTAssertEqual(expectedPicture, picture)
+    }
+    
+    func testShouldReturnPictureByMenuConfiguration() {
+        // given
+        let indexPath = IndexPath(row: 0, section: 0)
+        let cat = Cat(id: "12345", title: "Cat title", link: "Link")
+        let menuConfiguration = UIContextMenuConfiguration(identifier: cat.menuID, previewProvider: nil)
+        let expectedPicture = UIImage()
+        stub(self.imageService) { stub in
+            when(stub.downloadImage(from: any(), completion: any())).then { string, completion in
+                let response = AFDataResponse<Image>(request: nil, response: nil, data: nil, metrics: nil, serializationDuration: 0, result: Result<Image, AFError>.success(expectedPicture))
+                completion(response)
+            }
+        }
+        let viewModel = CatListViewModel(networkService: self.networkService, imageService: self.imageService)
+        viewModel.cats.accept([cat])
+        
+        // when
+        let expectation = XCTestExpectation(description: "Fetch picture")
+        viewModel.fetchPicture(to: indexPath) {
+            expectation.fulfill()
+        }
+        wait(for: [expectation], timeout: 1)
+        let picture = viewModel.picture(by: menuConfiguration)
         
         // then
         XCTAssertNotNil(picture)
@@ -285,5 +313,99 @@ class CatListViewModelTest: XCTestCase {
         // then
         XCTAssertTrue(expectToReload)
         XCTAssertFalse(expectToNotReload)
+    }
+    
+    func testShouldReturnDetailViewControllerByIndexPath() {
+        // given
+        let cat = Cat(id: "12345", title: "Cat title", link: "link")
+        let expectedPicture = UIImage(systemName: "heart.fill")!
+        stub(self.imageService) { stub in
+            when(stub.downloadImage(from: any(), completion: any())).then { string, completion in
+                let response = AFDataResponse<Image>(request: nil, response: nil, data: nil, metrics: nil, serializationDuration: 0, result: Result<Image, AFError>.success(expectedPicture))
+                completion(response)
+            }
+        }
+        let viewModel = CatListViewModel(networkService: self.networkService, imageService: self.imageService)
+        viewModel.cats.accept([cat])
+        let indexPath = IndexPath(row: 0, section: 0)
+        
+        // when
+        let expectation = XCTestExpectation(description: "fetch picture")
+        viewModel.fetchPicture(to: indexPath) {
+            expectation.fulfill()
+        }
+        
+        wait(for: [expectation], timeout: 1)
+        let catDetailViewController = viewModel.detailViewController(at: indexPath)
+        
+        // then
+        XCTAssertNotNil(catDetailViewController)
+    }
+    
+    func testShouldReturnDetailViewControllerByMenuConfiguration() {
+        // given
+        let cat = Cat(id: "12345", title: "Cat title", link: "link")
+        let menuConfiguration = UIContextMenuConfiguration(identifier: cat.menuID, previewProvider: nil)
+        let expectedPicture = UIImage(systemName: "heart.fill")!
+        stub(self.imageService) { stub in
+            when(stub.downloadImage(from: any(), completion: any())).then { string, completion in
+                let response = AFDataResponse<Image>(request: nil, response: nil, data: nil, metrics: nil, serializationDuration: 0, result: Result<Image, AFError>.success(expectedPicture))
+                completion(response)
+            }
+        }
+        let viewModel = CatListViewModel(networkService: self.networkService, imageService: self.imageService)
+        viewModel.cats.accept([cat])
+        let indexPath = IndexPath(row: 0, section: 0)
+        
+        // when
+        let expectation = XCTestExpectation(description: "fetch picture")
+        viewModel.fetchPicture(to: indexPath) {
+            expectation.fulfill()
+        }
+        
+        wait(for: [expectation], timeout: 1)
+        let catDetailViewController = viewModel.detailViewController(by: menuConfiguration)
+        
+        // then
+        XCTAssertNotNil(catDetailViewController)
+    }
+    
+    func testShouldReturnNilWhenNoCatOrPictureToDetailViewController() {
+        // given
+        let viewModel = CatListViewModel()
+        
+        // when
+        let catDetailViewController = viewModel.detailViewController(at: IndexPath(row: 0, section: 0))
+        
+        // then
+        XCTAssertNil(catDetailViewController)
+    }
+    
+    func testShouldReturnCatForMenuConfiguration() {
+        // given
+        let cat = Cat(id: "12345", title: "Cat title", link: "Link")
+        let menuConfiguration = UIContextMenuConfiguration(identifier: cat.menuID, previewProvider: nil)
+        let viewModel = CatListViewModel()
+        viewModel.cats.accept([cat])
+        
+        // when
+        let catByConfiguration = viewModel.cat(by: menuConfiguration)
+        
+        // then
+        XCTAssertNotNil(catByConfiguration)
+    }
+    
+    func testShouldReturnCatNilForMenuConfigurationWhenHasntCat() {
+        // given
+        let cat = Cat(id: "12345", title: "Cat title", link: "Link")
+        let menuConfiguration = UIContextMenuConfiguration(identifier: "123456" as NSCopying, previewProvider: nil)
+        let viewModel = CatListViewModel()
+        viewModel.cats.accept([cat])
+        
+        // when
+        let catByConfiguration = viewModel.cat(by: menuConfiguration)
+        
+        // then
+        XCTAssertNil(catByConfiguration)
     }
 }

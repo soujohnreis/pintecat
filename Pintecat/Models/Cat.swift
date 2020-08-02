@@ -8,7 +8,7 @@
 
 import Foundation
 
-struct Cat: Codable {
+struct Cat: Codable, MenuIdentifiable {
     // MARK: Properties
     var id: String
     var title: String
