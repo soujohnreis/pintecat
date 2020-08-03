@@ -125,28 +125,16 @@ extension CatListViewController: UICollectionViewDataSource {
                     print("like action")
                 },
                 UIAction(title: "Share", image: UIImage(systemName: "square.and.arrow.up")) {_ in
-                    print("share action")
+                    DispatchQueue.main.async {
+                        guard let url = URL(string: cat.link) else { return }
+                        let shareViewController = UIActivityViewController(activityItems: [cat.title, url, picture], applicationActivities: nil)
+                        self.present(shareViewController, animated: true, completion: nil)
+                    }
                 }
             ])
         })
         
         return menu
-    }
-    
-    func collectionView(_ collectionView: UICollectionView, previewForHighlightingContextMenuWithConfiguration configuration: UIContextMenuConfiguration) -> UITargetedPreview? {
-        return nil
-    }
-    
-    func collectionView(_ collectionView: UICollectionView, previewForDismissingContextMenuWithConfiguration configuration: UIContextMenuConfiguration) -> UITargetedPreview? {
-        return nil
-    }
-    
-    func collectionView(_ collectionView: UICollectionView, willPerformPreviewActionForMenuWith configuration: UIContextMenuConfiguration, animator: UIContextMenuInteractionCommitAnimating) {
-//        guard let detailViewController = self.viewModel.detailViewController(by: configuration) else { return }
-//
-//        animator.addCompletion { [weak self]
-//            self?.navigationController?.pushViewController(detailViewController, animated: true)
-//        }
     }
 }
 
